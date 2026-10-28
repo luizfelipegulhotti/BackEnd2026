@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model clientes {
+  id            Int          @id @default(autoincrement())
+  nome          String?      @db.VarChar(255)
+  telefone      String?      @db.VarChar(255)
+  cpf           String?      @unique @db.VarChar(14) // Alterado para unique e tamanho 14
+  cnh           String?      @db.VarChar(255)
+  email         String?      @unique @db.VarChar(255) // NOVO
+  senha         String?      @db.VarChar(255)         // NOVO
+  permissao     String?      @db.VarChar(255)         // NOVO
+  ativo         Boolean?                              // NOVO
+  criado_em     DateTime     @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime     @default(now()) @db.Timestamp(0)
+  deletado_em   DateTime?    @db.Timestamp(0)
+  enderecos     enderecos[]
+  orcamentos    orcamentos[]
+  veiculos      veiculos[]
+}
+
+model departamentos {
+  id            Int        @id @default(autoincrement())
+  nome          String?    @db.VarChar(255)
+  criado_em     DateTime   @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime   @default(now()) @db.Timestamp(0)
+  deletado_em   DateTime?  @db.Timestamp(0)
+  orcamentos    orcamentos[]
+}
+
+model enderecos {
+  id            Int       @id @default(autoincrement())
+  id_cliente    Int?
+  cep           String?   @db.VarChar(255)
+  logradouro    String?   @db.VarChar(255)
+  bairro        String?   @db.VarChar(255)
+  uf            String?   @db.VarChar(255)
+  numero        String?   @db.VarChar(255)
+  cidade        String?   @db.VarChar(255)
+  criado_em     DateTime  @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime  @default(now()) @db.Timestamp(0)
+  deletado_em   DateTime? @db.Timestamp(0)
+  clientes      clientes? @relation(fields: [id_cliente], references: [id])
+}
+
+model orcamentos {
+  id              Int          @id @default(autoincrement())
+  id_usuario      Int?
+  id_cliente      Int?
+  id_veiculo      Int?
+  id_departamento Int?
+  etapa           String?      @db.VarChar(255)
+  valor_inicial   String?      @db.VarChar(255)
+  valor_final     String?      @db.VarChar(255)
+  data_inicio     DateTime?    @db.Date
+  data_termino    DateTime?    @db.Date
+  descricao       String?      @db.VarChar(255)
+  criado_em       DateTime     @default(now()) @db.Timestamp(0)
+  atualizado_em   DateTime     @default(now()) @db.Timestamp(0)
+  deletado_em     DateTime?    @db.Timestamp(0)
+
+  usuarios      usuarios?      @relation(fields: [id_usuario], references: [id])
+  clientes      clientes?      @relation(fields: [id_cliente], references: [id])
+  veiculos      veiculos?      @relation(fields: [id_veiculo], references: [id])
+  departamentos departamentos? @relation(fields: [id_departamento], references: [id])
+}
+
+model usuarios {
+  id            Int          @id @default(autoincrement())
+  nome          String?      @db.VarChar(255)
+  email         String?      @unique @db.VarChar(255)
+  senha         String?      @db.VarChar(255)
+  cpf           String?      @unique @db.VarChar(14)
+  permissao     String?      @db.VarChar(255)
+  ativo         Boolean?
+  criado_em     DateTime     @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime     @default(now()) @db.Timestamp(0)
+  deletado_em   DateTime?    @db.Timestamp(0)
+  orcamentos    orcamentos[]
+  veiculos      veiculos[]
+}
+
+model veiculos {
+  id              Int            @id @default(autoincrement())
+  id_usuario      Int?
+  id_cliente      Int?
+  placa           String?        @db.VarChar(255)
+  modelo          String?        @db.VarChar(255)
+  foto            String?        @db.VarChar(255)
+  criado_em       DateTime       @default(now()) @db.Timestamp(0)
+  atualizado_em   DateTime       @default(now()) @db.Timestamp(0)
+  deletado_em     DateTime?      @db.Timestamp(0)
+  orcamentos      orcamentos[]
+  usuarios        usuarios?      @relation(fields: [id_usuario], references: [id])
+  clientes        clientes?      @relation(fields: [id_cliente], references: [id])
+}
