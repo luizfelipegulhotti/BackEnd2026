@@ -37,7 +37,7 @@ services:
 
   frontend:
     build:
-      context: ../ProjetoConcessionariaFrontend/ProjetoConcessionariaFrontend
+      context: ../FrontEnd2026
       dockerfile: Dockerfile
     container_name: concessionaria_frontend
     restart: always
